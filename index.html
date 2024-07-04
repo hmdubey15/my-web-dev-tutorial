@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HTML Demo</title>
+    <link rel="icon" type="image/x-icon" href="./Images/hd_logo.png">
+    <style>
+        .grid-container {
+            background-color: yellow;
+            width: 600px;
+            height: 300px;
+            margin: 15% auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            justify-items: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .grid-item {
+            background: white;
+            color: black;
+            padding: 20px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid-container">
+        <div class="grid-item grid-item-1">A</div>
+        <div class="grid-item grid-item-2">B</div>
+        <div class="grid-item grid-item-3">C</div>
+        <div class="grid-item grid-item-4">D</div>
+        <div class="grid-item grid-item-5">E</div>
+        <div class="grid-item grid-item-6">F</div>
+    </div>
+</body>
+
+</html>

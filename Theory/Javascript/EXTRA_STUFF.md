@@ -1,0 +1,224 @@
+<div style="font-size: 17px;background: black;padding: 2rem;">
+
+# <a href="https://www.youtube.com/watch?v=2IbRtjez6ag&list=PLZlA0Gpn_vH85jM1TWO6TdCtSr6ruglWn&index=38&ab_channel=WebDevSimplified">IntersectionObserver</a>
+
+The `IntersectionObserver` API is a native browser API that allows asynchronous monitoring of changes in the intersection of a target element with an ancestor element or a top-level page's viewport. The API's purpose is to determine if and to what extent a component is visible to the user.
+
+Some of the use cases of `IntersectionObserver` are:
+- Lazy loading images.
+- Detect if an element is in the viewport or not.
+- Auto-play a video if in the viewport, otherwise pause the video.
+- Infinite scrolling.
+
+`IntersectionObserver` API can be used to observe an element. This API takes two inputs:
+
+- **A Callback function:** This function receives an array of entries (`IntersectionObserverEntry` objects) that are to be observed by an ancestor or document viewport and the observer itself. <span style="color: Cyan;">The entries array just lists all the elements we are observing that have had their intersection status change. This means that the element has either entered or left the screen.</span> Entries have a property <b style="color: Violet;">isIntersecting</b> which can be used to determine if the target entry is visible or not. If this property returns `true` then it means the target is visible else it’s not. The other useful property they have is <b style="color: Orange;">target</b> which returns reference of current element.
+- **An object with properties root, threshold, and rootMargin.**
+    - <b style="color: Salmon;">root</b> property is used to tell the element that is used as the viewport for checking the visibility of the target element and it must be the ancestor of the target element, and if not specified then `document viewport` is the default value.
+    - <b style="color: Chartreuse;">threshold</b> property can be a number or an array of numbers. It is used to tell how much of the target element should be visible when the above callback function gets triggered. For example, if the threshold is 0.5, then the callback function will be triggered when half of the target element is visible in the viewport and if the threshold is [0.5, 0.25] then when the target element’s half and one-fourth part is visible then the callback function will be triggered. The default is 0 which means as soon as the target element is visible the callback function will be triggered.
+    - <b style="color: HotPink;">rootMargin</b> property is the same as the CSS’s margin property which can take either one value(applicable to all four margins) or multiple values for the individual margins. This property can be used to grow or shrink the container viewport. For example, if rootMargin is 20px the viewport will be 20px larger so once the target element is 20px from being within the viewport it will be considered intersecting. The default value is 0 for the margins.
+
+<h4><u>Creating an observer</u></h4>
+
+You create an instance of `IntersectionObserver` by passing it a callback function and an options object.
+
+The callback function is executed when the intersection status of the observed elements changes. It receives an array of `IntersectionObserverEntry` objects and the observer itself.
+
+```js
+const options = {
+  root: null, // Defaults to the viewport if not specified
+  rootMargin: '0px', // Margin around the root
+  threshold: [0, 0.25, 0.5, 0.75, 1] // Thresholds at which the callback will be triggered
+};
+
+const callback = (entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      console.log('Element is intersecting:', entry.target);
+      // Perform your actions here
+    }
+  });
+};
+
+const observer = new IntersectionObserver(callback, options);
+```
+
+<h4><u>Observing Elements</u></h4>
+
+Use the <b style="color: LightGreen;">observe</b> method to start observing an element.
+
+```js
+const targetElement = document.querySelector('#target');
+observer.observe(targetElement);
+```
+
+<h4><u>Unobserving Elements</u></h4>
+
+Use the <b style="color: Yellow;">unobserve</b> method to stop observing an element.
+
+```js
+observer.unobserve(targetElement);
+```
+
+<h4><u>Disconnecting the Observer</u></h4>
+
+Use the <b style="color: Tomato;">disconnect</b> method to stop observing all elements.
+
+```js
+observer.disconnect();
+```
+
+<h3 style="border-bottom: 2px solid white; padding-bottom: 2px; display: inline-block;">Lazy Loading Images</h3>
+
+```html
+<img data-src="image.jpg" alt="Lazy load example" class="lazy-load">
+```
+
+```js
+document.addEventListener('DOMContentLoaded', () => {
+  const lazyImages = document.querySelectorAll('.lazy-load');
+
+  const lazyLoad = (entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        img.classList.remove('lazy-load');
+        observer.unobserve(img);
+      }
+    });
+  };
+
+  const observer = new IntersectionObserver(lazyLoad, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+  });
+
+  lazyImages.forEach(image => {
+    observer.observe(image);
+  });
+});
+
+```
+
+<br>
+
+# <a href="https://www.youtube.com/watch?v=Mi4EF9K87aM&list=PLZlA0Gpn_vH85jM1TWO6TdCtSr6ruglWn&index=73&ab_channel=WebDevSimplified">MutationObserver</a>
+
+`MutationObserver` is a JavaScript API that allows developers to listen for changes to specific elements or nodes in the DOM (Document Object Model). It provides a way to observe and respond to changes that occur within the DOM structure. These changes include:
+- **Attributes:** Modifications to an element’s attributes.
+- **Child List:** Additions or removals of child elements.
+- **Subtree:** Changes to the descendants of the target element.
+
+The `MutationObserver` works by registering a callback function to observe a specific target element or node in the DOM. When a change occurs, such as a node being added or removed, the callback function is called with a list of `MutationRecord` objects that describe the changes that have occurred.
+
+- <b style="color: Orange;">MutationObserver()</b> **constructor**: The DOM `MutationObserver()` constructor (part of the `MutationObserver` interface) creates and returns a new observer which invokes a specified callback when DOM events occur. DOM observation does not begin immediately; the `observe()` method must be called first to establish which portion of the DOM to watch and what kinds of changes to watch for. It takes just one parameter - A callback function which will be called on each DOM change that qualifies given the observed node or subtree and options. The callback function takes as input two parameters: 
+  - An array of `MutationRecord` objects, describing each change that occurred.
+  - The `MutationObserver` which invoked the callback. This is most often used to disconnect the observer using `MutationObserver.disconnect()`.
+- <b style="color: Chartreuse;">observe()</b> **method**: Configures the `MutationObserver` to begin receiving notifications through its callback function when DOM changes matching the given options occur. Depending on the configuration, the observer may watch a single Node in the DOM tree, or that node and some or all of its descendant nodes. Parameters:
+  - <span style="color: Yellow;">target:</span> A DOM Node (which may be an Element) within the DOM tree to watch for changes, or to be the root of a subtree of nodes to be watched.
+  - <span style="color: Yellow;">options:</span> An object providing options that describe which DOM mutations should be reported to mutationObserver's callback. At a minimum, one of childList, attributes, and/or characterData must be true when you call `observe()`. Otherwise, a `TypeError` exception will be thrown. Options are as follows:
+    - <span style="color: Cyan;">subtree:</span> Set to true to extend monitoring to the entire subtree of nodes rooted at target. All of the other properties are then extended to all of the nodes in the subtree instead of applying solely to the target node. The default value is false.
+    - <span style="color: Cyan;">childList:</span> Set to true to monitor the target node (and, if subtree is true, its descendants) for the addition of new child nodes or removal of existing child nodes. The default value is false.
+    - <span style="color: Cyan;">attributes:</span> Set to true to watch for changes to the value of attributes on the node or nodes being monitored. The default value is true if either of attributeFilter or attributeOldValue is specified, otherwise the default value is false.
+    - <span style="color: Cyan;">attributeFilter:</span> An array of specific attribute names to be monitored. If this property isn't included, changes to all attributes cause mutation notifications.
+    - <span style="color: Cyan;">attributeOldValue:</span> Set to true to record the previous value of any attribute that changes when monitoring the node or nodes for attribute changes; See Monitoring attribute values for an example of watching for attribute changes and recording values. The default value is false.
+    - <span style="color: Cyan;">characterData:</span> Set to true to monitor the specified target node (and, if subtree is true, its descendants) for changes to the character data contained within the node or nodes. The default value is true if characterDataOldValue is specified, otherwise the default value is false.
+    - <span style="color: Cyan;">characterDataOldValue:</span> Set to true to record the previous value of a node's text whenever the text changes on nodes being monitored. The default value is false.
+
+- <b style="color: Chartreuse;">disconnect()</b> **method**: Stops the `MutationObserver` instance from receiving further notifications until and unless `observe()` is called again.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MutationObserver Example</title>
+</head>
+<body>
+  <div id="example">
+    <p>Initial content</p>
+  </div>
+  <button id="modify">Modify Content</button>
+
+  <script>
+    const targetNode = document.getElementById('example');
+
+    const config = {
+      attributes: true,
+      childList: true,
+      subtree: true
+    };
+
+    const observer = new MutationObserver((mutationsList, observer) => {
+      for (let mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+          console.log('A child node has been added or removed.');
+        } else if (mutation.type === 'attributes') {
+          console.log('The ' + mutation.attributeName + ' attribute was modified.');
+        }
+      }
+    });
+
+    observer.observe(targetNode, config);
+
+    document.getElementById('modify').addEventListener('click', () => {
+      const newNode = document.createElement('p');
+      newNode.textContent = 'New content';
+      targetNode.appendChild(newNode);
+    });
+  </script>
+</body>
+</html>
+```
+
+<br>
+<div style="border: 2px solid Red; padding: 10px;">
+
+While `MutationObserver` is efficient, observing a large subtree or too many attributes can impact performance. It is important to configure the observer to only watch for necessary changes and disconnect it when it is no longer needed.
+</div>
+
+<br><br>
+
+# <a href="https://www.youtube.com/watch?v=VdAlFWBUGV4&ab_channel=ColbyFayock">AbortController</a>
+
+It is a Web API that allows you to abort one or more web requests as and when desired. It is particularly useful when dealing with fetch requests or other asynchronous tasks that may need to be canceled if certain conditions are met, such as a user navigating away from a page or initiating a new request that supersedes a previous one.
+
+<h3 style="border-bottom: 2px solid white; padding-bottom: 2px; display: inline-block;">Key Components</h3>
+
+- <b style="color:DarkSalmon;">AbortController</b>: An object that allows you to create and manage an abort signal.
+- <b style="color:DarkSalmon;">AbortSignal</b>: An object that communicates with a DOM request (like a fetch request) and signals if it should be aborted.
+
+```js
+
+// ----Creating an AbortController instance----
+const controller = new AbortController();
+const signal = controller.signal;
+
+// ----Started a fetch request----
+fetch('https://api.example.com/data', { signal })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Data received:', data);
+  })
+  .catch(error => {
+    if (error.name === 'AbortError') {
+      console.log('Fetch request was aborted');
+    } else {
+      console.error('Fetch error:', error);
+    }
+  });
+
+// ----Abort the fetch request after 5 seconds----
+setTimeout(() => {
+  controller.abort();
+  console.log('Fetch request aborted after 5 seconds');
+}, 5000);
+```
+
+Using in React JS:
+
+- In `useEffect`, we can use it in cleanup function.
+- For any event listener, `refs` should be used (as shown in above video).
+
+</div>
