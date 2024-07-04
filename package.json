@@ -1,0 +1,20 @@
+{
+  "name": "my-web-dev-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "clear && node '/Users/himanshudubey/Desktop/my-projects/my-web-dev-tutorial/index.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hmdubey15/my-web-dev-tutorial.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hmdubey15/my-web-dev-tutorial/issues"
+  },
+  "homepage": "https://github.com/hmdubey15/my-web-dev-tutorial#readme"
+}
